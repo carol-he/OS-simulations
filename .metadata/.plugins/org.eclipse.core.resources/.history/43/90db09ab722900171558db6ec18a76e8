@@ -1,0 +1,113 @@
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.Scanner;
+
+class paging {
+	static Scanner randomSrc;
+	public static int randomOS(int U){
+        //File fileName = new File("random-numbers.txt");
+        //Scanner src;
+        //try {
+        //src = new Scanner(fileName);
+        int X = randomSrc.nextInt();
+        return (1 + (X % U));
+        //} catch (FileNotFoundException e) {
+        // TODO Auto-generated catch block
+        //	e.printStackTrace();
+        //}
+        //System.out.println("Random-numbers file not found");
+        //return 0;
+    }
+}
+public static void main(String[] args) throws FileNotFoundException{
+	Scanner reader = new Scanner(System.in);  // Reading from System.in
+	reader.close(); 
+    String name = args[0];
+	File fileName = new File(name);
+	Scanner src = new Scanner(fileName);
+	//declare array of tasks
+	Task[] tasks = new Task[src.nextInt()];
+	Task[] tasks2 = new Task[tasks.length];
+	//declare array of resources. index + 1 is the resource number, value is # of resources
+    int[] resources = new int[src.nextInt()];
+    int[] resources2 = new int[resources.length];
+    for(int i = 0; i < resources.length; i++){
+    	resources[i] = src.nextInt();
+    	resources2[i] = resources[i];
+    }
+    //getting tasks :^)
+    for(int i = 0; i < tasks.length; i++){
+    	//each task has an arraylist of instructs
+    	ArrayList<Instruction> instructs = new ArrayList<Instruction>();
+    	ArrayList<Instruction> instructs2 = new ArrayList<Instruction>();
+    	tasks[i] = new Task(0, 0, false, 0, instructs);
+    	tasks2[i] = new Task(0, 0, false, 0, instructs2);
+    }
+    	int currentIndex;
+    	while(src.hasNext()){
+    		//while the next activity is not terminate
+    		//create instruction object, put in all the parameters
+    		Instruction instr = new Instruction("", 0, 0, 0);
+    		Instruction instr2 = new Instruction("", 0, 0, 0);
+    		String activity = src.next();
+    		currentIndex = src.nextInt() - 1;
+    		int delay = src.nextInt();
+    		int rt = src.nextInt();
+    		int needed = src.nextInt();
+    		instr.setActivity(activity);
+    		instr.setDelay(delay);
+    		instr.setResourceType(rt);
+    		instr.setNumNeeded(needed);
+    		instr2.setActivity(activity);
+    		instr2.setDelay(delay);
+    		instr2.setResourceType(rt);
+    		instr2.setNumNeeded(needed);
+    		//add last instruction to arraylist
+    		tasks[currentIndex].getInstructions().add(instr);
+    		tasks2[currentIndex].getInstructions().add(instr2);
+    		//if last activity was 'terminate', stop populating arraylist
+    	}
+    	//add arraylist to tasks[i], as well as times = 0
+    	
+    optimisticManager(tasks, resources);
+    double totalTimeTaken = 0;
+    double totalWaitingTime = 0;
+    System.out.println("            FIFO");
+    for(int i = 0; i < tasks.length; i++){
+    	if(tasks[i].isAborted()){
+    		System.out.println("Task " + (i+1) + "      aborted");
+    	}
+    	else{
+    		double percentage = ((double)tasks[i].getWaitingTime()/(double)tasks[i].getTimeTaken()) * 100;
+	    	System.out.println("Task " + (i+1) + "      " + tasks[i].getTimeTaken() + "   " + tasks[i].getWaitingTime() + "   "
+	    			+ (int)Math.round(percentage) + "%");
+	    	totalTimeTaken = totalTimeTaken + tasks[i].getTimeTaken();
+	    	totalWaitingTime = totalWaitingTime + tasks[i].getWaitingTime();
+    	}
+    }
+    int totalPercentage = (int) Math.round((totalWaitingTime/totalTimeTaken) * 100);
+    System.out.println("total       " + (int)totalTimeTaken + "   " + (int)totalWaitingTime + "   " + totalPercentage + "%\n");
+    
+    
+
+    bankersAlgorithm(tasks2, resources2);
+    totalTimeTaken = 0;
+    totalWaitingTime = 0;
+    System.out.println("          BANKER'S");
+    for(int i = 0; i < tasks2.length; i++){
+    	if(tasks2[i].isAborted()){
+    		System.out.println("Task " + (i+1) + "      aborted");
+    	}
+    	else{
+    		double percentage = ((double)tasks2[i].getWaitingTime()/(double)tasks2[i].getTimeTaken()) * 100;
+	    	System.out.println("Task " + (i+1) + "      " + tasks2[i].getTimeTaken() + "   " + tasks2[i].getWaitingTime() + "   "
+	    			+ (int)Math.round(percentage) + "%");
+	    	totalTimeTaken = totalTimeTaken + tasks2[i].getTimeTaken();
+	    	totalWaitingTime = totalWaitingTime + tasks2[i].getWaitingTime();
+    	}
+    }
+    totalPercentage = (int) Math.round((totalWaitingTime/totalTimeTaken) * 100);
+    System.out.println("total       " + (int)totalTimeTaken + "   " + (int)totalWaitingTime + "   " + totalPercentage + "%\n");
+    
+}

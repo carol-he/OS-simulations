@@ -1,0 +1,31 @@
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.Scanner;
+
+class paging {
+	static Scanner randomSrc;
+	public static int randomOS(int U){
+        //File fileName = new File("random-numbers.txt");
+        //Scanner src;
+        //try {
+        //src = new Scanner(fileName);
+        int X = randomSrc.nextInt();
+        return (1 + (X % U));
+        //} catch (FileNotFoundException e) {
+        // TODO Auto-generated catch block
+        //	e.printStackTrace();
+        //}
+        //System.out.println("Random-numbers file not found");
+        //return 0;
+    }
+	public static void main(String[] args) throws FileNotFoundException{
+    	Scanner reader = new Scanner(System.in);  // Reading from System.in
+    	reader.close(); 
+        String name = args[0];
+		File fileName = new File(name);
+		Scanner src = new Scanner(fileName);
+		
+    }
+}
+

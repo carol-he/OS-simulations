@@ -1,0 +1,45 @@
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.Scanner;
+
+class paging {
+	static Scanner randomSrc;
+	public static int randomOS(int U){
+        //File fileName = new File("random-numbers.txt");
+        //Scanner src;
+        //try {
+        //src = new Scanner(fileName);
+        int X = randomSrc.nextInt();
+        return (1 + (X % U));
+        //} catch (FileNotFoundException e) {
+        // TODO Auto-generated catch block
+        //	e.printStackTrace();
+        //}
+        //System.out.println("Random-numbers file not found");
+        //return 0;
+    }
+	public static void main(String[] args) throws FileNotFoundException{
+    	Scanner reader = new Scanner(System.in);  // Reading from System.in
+    	reader.close(); 
+        String name = args[0];
+		File fileName = new File(name);
+		Scanner src = new Scanner(fileName);
+		int M = src.nextInt();
+		int P = src.nextInt();
+		int S = src.nextInt();
+		int J = src.nextInt();
+		int N = src.nextInt();
+		String R = src.next();
+		int O = src.nextInt();
+		System.out.println("The machine size is " + M + ".");
+		System.out.println("The page size is " + P + ".");
+		System.out.println("The process size is " + S + ".");
+		System.out.println("The job mix number is " + J + ".");
+		System.out.println("The number of references per process is " + N + ".");
+		System.out.println("The replacement algorithm is " + R + ".")
+		System.out.println("The replacement algorithm is " + R + ".")
+		
+    }
+}
+
