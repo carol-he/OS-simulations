@@ -1,0 +1,127 @@
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.Scanner;
+
+class paging {
+	static Scanner randomSrc;
+	public static int randomOS(int U){
+        return randomSrc.nextInt();
+    }
+	public static void main(String[] args) throws FileNotFoundException{ 
+    	//scanner for input file
+        String name = args[0];
+		File fileName = new File(name);
+		Scanner src = new Scanner(fileName);
+		//scanner for random numbers
+		File randomFileName = new File("random-numbers.txt");
+        randomSrc = new Scanner(randomFileName);
+		int M = src.nextInt();
+		int P = src.nextInt();
+		int S = src.nextInt();
+		int J = src.nextInt();
+		int N = src.nextInt();
+		String R = src.next();
+		int time = 0;
+		//int O = src.nextInt();
+		System.out.println("The machine size is " + M + ".");
+		System.out.println("The page size is " + P + ".");
+		System.out.println("The process size is " + S + ".");
+		System.out.println("The job mix number is " + J + ".");
+		System.out.println("The number of references per process is " + N + ".");
+		System.out.println("The replacement algorithm is " + R + ".");
+		//System.out.println("The level of debugging output is " + O + ".");
+		System.out.println();
+		int numFrames = M / P;
+		//create empty frame table
+		Frame[] frameTable = new Frame[numFrames];
+		int numPages = S / P;
+		//create the processes
+		ArrayList<Process> processes = new ArrayList<Process>();
+		if(J == 1){
+			processes.add(new Process(1, 0, 0, (111 * 1) % S));
+		}
+		else if(J == 2){
+			processes.add(new Process(1, 0, 0, (111 * 1) % S));
+			processes.add(new Process(1, 0, 0, (111 * 2) % S));
+			processes.add(new Process(1, 0, 0, (111 * 3) % S));
+			processes.add(new Process(1, 0, 0, (111 * 4) % S));
+		}
+		else if(J == 3){
+			processes.add(new Process(0, 0, 0, (111 * 1) % S));
+		}
+		else{
+			processes.add(new Process(.75, .25, 0, (111 * 1) % S));
+			processes.add(new Process(.75, 0, .25, (111 * 2) % S));
+			processes.add(new Process(.75, .125, .125, (111 * 3) % S));
+			processes.add(new Process(.5, .125, .125, (111 * 4) % S));
+		}
+		int currentProcessNum = 0;
+		int q = 3;
+		int residencySum = 0;
+		int numEvictions = 0;
+		while(time < N * processes.size()){
+			//make sure the processes do 3 checks and then pass it on to the next process
+			if(q > 0){
+				q--;
+			}
+			else{
+				// move on to next process in rotation
+				q = 3;
+				if(currentProcessNum == processes.size() - 1){
+					currentProcessNum = 0;
+				}
+				else{
+					currentProcessNum++;
+				}
+			}
+			Process currentProcess = processes.get(currentProcessNum);
+			//get reference number, calculate page number
+			//process number and page number have to match for a frame hit
+			//check if there's a frame hit
+			int hit = -1;
+			int currentPageNum = currentProcess.getWordReferenced() / P;
+			for(int i = 0; i < frameTable.length; i++){
+				if(frameTable[i].getProcessID() == currentProcessNum && frameTable[i].getPageNum() == currentPageNum){
+					hit = i;
+					break;
+				}
+			}
+			if(hit != -1){
+				//hit, update end time
+				frameTable[hit].setEndTime(time);
+			} else {
+				//miss
+				//check if there's a free frame and put it in the free frame
+				int frameToUse = -1;
+				for(int i = 0; i < frameTable.length; i++){
+					if(frameTable[i].getProcessID() == currentProcessNum && frameTable[i].getPageNum() == currentPageNum){
+						frameToUse = i;
+						break;
+					}
+				}
+				//else, you must evict a frame with the policy specified, and then put it in that frame
+				//
+				frameTable[i].setProcessID(currentProcessNum);
+				frameTable[i].setPageNum(currentPageNum);
+				frameTable[i].setStartTime(time);
+				frameTable[i].setEndTime(time);
+			}
+			//update reference number
+			time++;
+		}
+		/*
+		System.out.print(processNum + "references word " + wordNum + "(page " + pageNum +
+				") at time " + time + ": ");
+		//if hit
+			System.out.println("Hit in frame " + frameNum);
+		//else
+			System.out.print("Fault, ");
+			//if there's a free frame
+			System.out.println("using free frame " + frameNum);
+			//else
+			System.out.println("evicting page " + " of " + "from frame " + frameNum);
+			*/
+    }
+}
+

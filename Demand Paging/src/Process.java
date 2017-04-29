@@ -1,45 +1,18 @@
 
 public class Process {
-	private int faultCount;
-	private int residencyTime;
-	private int evictCount;
-	private int id;
 	private double A;
 	private double B;
 	private double C;
-	public Process(int faultCount, int residencyTime, int evictCount, int id, double a, double b, double c) {
+	private int wordReferenced;
+	private int faultCount = 0;
+	private int residencyTime = 0;
+	private int evictCount = 0;
+	public Process(double a, double b, double c, int wordReferenced) {
 		super();
-		this.faultCount = faultCount;
-		this.residencyTime = residencyTime;
-		this.evictCount = evictCount;
-		this.id = id;
 		A = a;
 		B = b;
 		C = c;
-	}
-	public int getFaultCount() {
-		return faultCount;
-	}
-	public void setFaultCount(int faultCount) {
-		this.faultCount = faultCount;
-	}
-	public int getResidencyTime() {
-		return residencyTime;
-	}
-	public void setResidencyTime(int residencyTime) {
-		this.residencyTime = residencyTime;
-	}
-	public int getEvictCount() {
-		return evictCount;
-	}
-	public void setEvictCount(int evictsCount) {
-		this.evictCount = evictsCount;
-	}
-	public int getId() {
-		return id;
-	}
-	public void setId(int id) {
-		this.id = id;
+		this.wordReferenced = wordReferenced;
 	}
 	public double getA() {
 		return A;
@@ -59,5 +32,28 @@ public class Process {
 	public void setC(double c) {
 		C = c;
 	}
-	
+	public int getWordReferenced() {
+		return wordReferenced;
+	}
+	public void setWordReferenced(int wordReferenced) {
+		this.wordReferenced = wordReferenced;
+	}
+	public int getFaultCount() {
+		return faultCount;
+	}
+	public void setFaultCount(int faultCount) {
+		this.faultCount = faultCount;
+	}
+	public int getResidencyTime() {
+		return residencyTime;
+	}
+	public void setResidencyTime(int residencyTime) {
+		this.residencyTime = residencyTime;
+	}
+	public int getEvictCount() {
+		return evictCount;
+	}
+	public void setEvictCount(int evictsCount) {
+		this.evictCount = evictsCount;
+	}
 }
