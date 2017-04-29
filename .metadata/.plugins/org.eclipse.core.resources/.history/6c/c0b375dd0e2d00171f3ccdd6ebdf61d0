@@ -1,0 +1,11 @@
+
+public class Process {
+	private int faultCount;
+	private int residencyTime;
+	private int evictsCount;
+	private int id;
+	private int S;
+	private int N;
+	private double A;
+	private double B;
+}

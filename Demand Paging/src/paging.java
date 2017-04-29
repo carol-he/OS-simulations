@@ -6,18 +6,7 @@ import java.util.Scanner;
 class paging {
 	static Scanner randomSrc;
 	public static int randomOS(int U){
-        //File fileName = new File("random-numbers.txt");
-        //Scanner src;
-        //try {
-        //src = new Scanner(fileName);
-        int X = randomSrc.nextInt();
-        return (1 + (X % U));
-        //} catch (FileNotFoundException e) {
-        // TODO Auto-generated catch block
-        //	e.printStackTrace();
-        //}
-        //System.out.println("Random-numbers file not found");
-        //return 0;
+        return randomSrc.nextInt();
     }
 	public static void main(String[] args) throws FileNotFoundException{ 
     	//scanner for input file
@@ -33,15 +22,22 @@ class paging {
 		int J = src.nextInt();
 		int N = src.nextInt();
 		String R = src.next();
-		int O = src.nextInt();
+		//int O = src.nextInt();
 		System.out.println("The machine size is " + M + ".");
 		System.out.println("The page size is " + P + ".");
 		System.out.println("The process size is " + S + ".");
 		System.out.println("The job mix number is " + J + ".");
 		System.out.println("The number of references per process is " + N + ".");
 		System.out.println("The replacement algorithm is " + R + ".");
-		System.out.println("The level of debugging output is " + O + ".");
+		//System.out.println("The level of debugging output is " + O + ".");
 		System.out.println();
+		int numFrames = M / P;
+		//create empty frame table
+		Frame[] frameTable = new Frame[numFrames];
+		int numPages = S / P;
+		//create the processes
+		ArrayList<Process> pList = new ArrayList<Process>();
+		/*
 		System.out.print(processNum + "references word " + wordNum + "(page " + pageNum +
 				") at time " + time + ": ");
 		//if hit
@@ -52,6 +48,7 @@ class paging {
 			System.out.println("using free frame " + frameNum);
 			//else
 			System.out.println("evicting page " + " of " + "from frame " + frameNum);
+			*/
     }
 }
 

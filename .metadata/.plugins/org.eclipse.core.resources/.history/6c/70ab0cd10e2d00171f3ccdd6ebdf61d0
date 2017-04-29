@@ -1,0 +1,6 @@
+
+public class Process {
+	private int faultCount;
+	private int residencyTime;
+	private int evictsCount;
+}

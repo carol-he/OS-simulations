@@ -1,0 +1,22 @@
+
+public class Process {
+	private int faultCount;
+	private int residencyTime;
+	private int evictsCount;
+	private int id;
+	private int S;
+	private int N;
+	private double A;
+	private double B;
+	public Process(int faultCount, int residencyTime, int evictsCount, int id, int s, int n, double a, double b) {
+		super();
+		this.faultCount = faultCount;
+		this.residencyTime = residencyTime;
+		this.evictsCount = evictsCount;
+		this.id = id;
+		S = s;
+		N = n;
+		A = a;
+		B = b;
+	}
+}

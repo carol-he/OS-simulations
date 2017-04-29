@@ -1,0 +1,7 @@
+
+public class Frame {
+	private int startTime;
+	private int endTime;
+	private int pageNum = -1;
+	private int processID = -1;
+}

@@ -1,0 +1,7 @@
+
+public class Frame {
+	private int startTime;
+	private int endTimel
+	private int pgNum = -1;
+	private int processID = -1'
+}
