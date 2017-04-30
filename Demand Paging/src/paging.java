@@ -5,8 +5,10 @@ import java.util.Scanner;
 
 class paging {
 	static Scanner randomSrc;
-	public static int randomOS(int U){
-        return randomSrc.nextInt();
+	public static int randomOS(int currentProcessNum){
+		int X = randomSrc.nextInt();
+		System.out.println(currentProcessNum+1 + " uses random number: " + X);
+        return X;
     }
 	public static void main(String[] args) throws FileNotFoundException{ 
     	//scanner for input file
@@ -35,6 +37,9 @@ class paging {
 		int numFrames = M / P;
 		//create empty frame table
 		Frame[] frameTable = new Frame[numFrames];
+		for(int i = 0; i < frameTable.length; i++){
+			frameTable[i] = new Frame(0, 0, -1, -1);
+		}
 		int numPages = S / P;
 		//create the processes
 		ArrayList<Process> processes = new ArrayList<Process>();
@@ -60,6 +65,7 @@ class paging {
 		int q = 3;
 		int residencySum = 0;
 		int numEvictions = 0;
+		int numFaults = 0;
 		while(time < N * processes.size()){
 			//make sure the processes do 3 checks and then pass it on to the next process
 			if(q > 0){
@@ -89,15 +95,16 @@ class paging {
 			}
 			if(hit != -1){
 				//hit, update end time
+				System.out.println(currentProcessNum + 1 + " references word " + currentProcess.getWordReferenced() + " (page " + currentPageNum + ") at time " + (time+1) + ": Hit in frame " + hit);
 				frameTable[hit].setEndTime(time);
 			} else {
+				System.out.print(currentProcessNum + 1 + " references word " + currentProcess.getWordReferenced() + " (page " + currentPageNum + ") at time " + (time+1) + ": Fault, ");
 				//miss
 				//check if there's a free frame and put it in the free frame
 				int frameToUse = -1;
 				for(int i = 0; i < frameTable.length; i++){
 					if(frameTable[i].getProcessID() == -1 && frameTable[i].getPageNum() == -1){
 						frameToUse = i;
-						break;
 					}
 				}
 				//else, you must evict a frame with the policy specified, and then put it in that frame
@@ -105,26 +112,28 @@ class paging {
 					// get the frame to use
 					if(R.equals("lru")){
 						int min = frameTable[0].getEndTime();
+						frameToUse = 0;
 						for(int i = 0; i < frameTable.length; i++){
 							if(frameTable[i].getEndTime() < min){
 								min = frameTable[i].getEndTime();
+								frameToUse = i;
 							}
-							frameToUse = i;
 						}
 					}
 					else if(R.equals("fifo")){
-						int min = frameTable[0].getEndTime();
+						int min = frameTable[0].getStartTime();
+						frameToUse = 0;
 						for(int i = 0; i < frameTable.length; i++){
-							if(frameTable[i].getEndTime() < min){
+							if(frameTable[i].getStartTime() < min){
 								min = frameTable[i].getStartTime();
+								frameToUse = i;
 							}
-							frameToUse = i;
 						}
 					}
 					else if(R.equals("random")){
-						frameToUse = randomSrc.nextInt() % frameTable.length;
+						frameToUse = randomOS(currentProcessNum) % frameTable.length;
 					}
-					
+					System.out.println(" evicting page " + 0 + " of " + 0 + " from frame " + frameToUse + ".");
 					//calculate residency time, increment evictions
 					currentProcess.setEvictCount(currentProcess.getEvictCount() + 1);
 					numEvictions++;
@@ -132,14 +141,19 @@ class paging {
 					residencySum = residencySum + resTime;
 					currentProcess.setResidencyTime(currentProcess.getResidencyTime() + resTime);
 					
+				} else {
+					System.out.println("using free frame " + frameToUse);
 				}
+				//increment fault count
+				currentProcess.setFaultCount(currentProcess.getFaultCount() + 1);
+				numFaults++;
 				frameTable[frameToUse].setProcessID(currentProcessNum);
 				frameTable[frameToUse].setPageNum(currentPageNum);
 				frameTable[frameToUse].setStartTime(time);
 				frameTable[frameToUse].setEndTime(time);
 			}
 			//update reference number
-			double rand = randomSrc.nextInt()/(Integer.MAX_VALUE + 1.0);
+			double rand = randomOS(currentProcessNum)/(Integer.MAX_VALUE + 1.0);
 			if(rand < currentProcess.getA()){
 				currentProcess.setWordReferenced((currentProcess.getWordReferenced() + 1) % S);
 			}
@@ -155,8 +169,19 @@ class paging {
 			time++;
 		}
 		for(int i = 0; i < processes.size(); i++){
-			int avgresidency = processes.get(i).getResidencyTime() / processes.get(i).getEvictCount();
-			System.out.println("Process " + (i+1) + " had " + processes.get(i).getEvictCount() + " faults and " + avgresidency + " average residency.");
+			if(processes.get(i).getEvictCount() > 0){
+				double avgresidency = (double)processes.get(i).getResidencyTime() / processes.get(i).getEvictCount();
+				System.out.println("Process " + (i+1) + " had " + processes.get(i).getFaultCount() + " faults and " + avgresidency + " average residency.");
+			} else {
+				System.out.println("Process " + (i+1) + " had " + processes.get(i).getFaultCount() + " faults.");
+				System.out.println("\tWith no evictions, the average residence is undefined.");
+			}
+		}
+		if(numEvictions == 0){
+			System.out.println("\nThe total number of faults is " + numFaults + ".");
+			System.out.println("\tWith no evictions, the overall average residence is undefined.");
+		} else {
+			System.out.println("\nThe total number of faults is " + numFaults + " and the overall average residency is " + residencySum/numEvictions + ".");
 		}
     }
 }
