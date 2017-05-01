@@ -7,12 +7,14 @@ public class Process {
 	private int faultCount = 0;
 	private int residencyTime = 0;
 	private int evictCount = 0;
-	public Process(double a, double b, double c, int wordReferenced) {
+	private int timer;
+	public Process(double a, double b, double c, int wordReferenced, int timer) {
 		super();
 		A = a;
 		B = b;
 		C = c;
 		this.wordReferenced = wordReferenced;
+		this.timer = timer;
 	}
 	public double getA() {
 		return A;
@@ -55,5 +57,11 @@ public class Process {
 	}
 	public void setEvictCount(int evictsCount) {
 		this.evictCount = evictsCount;
+	}
+	public int getTimer() {
+		return timer;
+	}
+	public void setTimer(int timer) {
+		this.timer = timer;
 	}
 }

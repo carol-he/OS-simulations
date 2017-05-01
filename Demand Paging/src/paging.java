@@ -44,22 +44,25 @@ class paging {
 		//create the processes
 		ArrayList<Process> processes = new ArrayList<Process>();
 		if(J == 1){
-			processes.add(new Process(1, 0, 0, (111 * 1) % S));
+			processes.add(new Process(1, 0, 0, (111 * 1) % S, N));
 		}
 		else if(J == 2){
-			processes.add(new Process(1, 0, 0, (111 * 1) % S));
-			processes.add(new Process(1, 0, 0, (111 * 2) % S));
-			processes.add(new Process(1, 0, 0, (111 * 3) % S));
-			processes.add(new Process(1, 0, 0, (111 * 4) % S));
+			processes.add(new Process(1, 0, 0, (111 * 1) % S, N));
+			processes.add(new Process(1, 0, 0, (111 * 2) % S, N));
+			processes.add(new Process(1, 0, 0, (111 * 3) % S, N));
+			processes.add(new Process(1, 0, 0, (111 * 4) % S, N));
 		}
 		else if(J == 3){
-			processes.add(new Process(0, 0, 0, (111 * 1) % S));
+			processes.add(new Process(0, 0, 0, (111 * 1) % S, N));
+			processes.add(new Process(0, 0, 0, (111 * 2) % S, N));
+			processes.add(new Process(0, 0, 0, (111 * 3) % S, N));
+			processes.add(new Process(0, 0, 0, (111 * 4) % S, N));
 		}
 		else{
-			processes.add(new Process(.75, .25, 0, (111 * 1) % S));
-			processes.add(new Process(.75, 0, .25, (111 * 2) % S));
-			processes.add(new Process(.75, .125, .125, (111 * 3) % S));
-			processes.add(new Process(.5, .125, .125, (111 * 4) % S));
+			processes.add(new Process(.75, .25, 0, (111 * 1) % S, N));
+			processes.add(new Process(.75, 0, .25, (111 * 2) % S, N));
+			processes.add(new Process(.75, .125, .125, (111 * 3) % S, N));
+			processes.add(new Process(.5, .125, .125, (111 * 4) % S, N));
 		}
 		int currentProcessNum = 0;
 		int q = 3;
@@ -67,13 +70,14 @@ class paging {
 		int numEvictions = 0;
 		int numFaults = 0;
 		while(time < N * processes.size()){
+			Process currentProcess = processes.get(currentProcessNum);
 			//make sure the processes do 3 checks and then pass it on to the next process
-			if(q > 0){
+			if(q > 0 && currentProcess.getTimer() > 0){
 				q--;
 			}
 			else{
 				// move on to next process in rotation
-				q = 3;
+				q = 2;
 				if(currentProcessNum == processes.size() - 1){
 					currentProcessNum = 0;
 				}
@@ -81,7 +85,9 @@ class paging {
 					currentProcessNum++;
 				}
 			}
-			Process currentProcess = processes.get(currentProcessNum);
+			currentProcess = processes.get(currentProcessNum);
+			//decrement timer
+			currentProcess.setTimer(currentProcess.getTimer() - 1);
 			//get reference number, calculate page number
 			//process number and page number have to match for a frame hit
 			//check if there's a frame hit
@@ -133,13 +139,18 @@ class paging {
 					else if(R.equals("random")){
 						frameToUse = randomOS(currentProcessNum) % frameTable.length;
 					}
-					System.out.println(" evicting page " + 0 + " of " + 0 + " from frame " + frameToUse + ".");
+					System.out.println("evicting page " + 0 + " of " + 0 + " from frame " + frameToUse + ".");
 					//calculate residency time, increment evictions
-					currentProcess.setEvictCount(currentProcess.getEvictCount() + 1);
+					int pID = frameTable[frameToUse].getProcessID();
+					processes.get(pID).setEvictCount(processes.get(pID).getEvictCount() + 1);
+					
+					System.out.println("adding evict count to " + currentProcessNum + " total: " + processes.get(pID).getEvictCount());
 					numEvictions++;
 					int resTime = time - frameTable[frameToUse].getStartTime();
+					
 					residencySum = residencySum + resTime;
-					currentProcess.setResidencyTime(currentProcess.getResidencyTime() + resTime);
+					processes.get(pID).setResidencyTime(processes.get(pID).getResidencyTime() + resTime);
+					System.out.println("adding resTime " + resTime + " count to " + currentProcessNum + " total: " + processes.get(pID).getResidencyTime());
 					
 				} else {
 					System.out.println("using free frame " + frameToUse);
@@ -170,7 +181,7 @@ class paging {
 		}
 		for(int i = 0; i < processes.size(); i++){
 			if(processes.get(i).getEvictCount() > 0){
-				double avgresidency = (double)processes.get(i).getResidencyTime() / processes.get(i).getEvictCount();
+				double avgresidency = (double)processes.get(i).getResidencyTime() / (double)processes.get(i).getEvictCount();
 				System.out.println("Process " + (i+1) + " had " + processes.get(i).getFaultCount() + " faults and " + avgresidency + " average residency.");
 			} else {
 				System.out.println("Process " + (i+1) + " had " + processes.get(i).getFaultCount() + " faults.");
@@ -181,7 +192,7 @@ class paging {
 			System.out.println("\nThe total number of faults is " + numFaults + ".");
 			System.out.println("\tWith no evictions, the overall average residence is undefined.");
 		} else {
-			System.out.println("\nThe total number of faults is " + numFaults + " and the overall average residency is " + residencySum/numEvictions + ".");
+			System.out.println("\nThe total number of faults is " + numFaults + " and the overall average residency is " + (double)residencySum/numEvictions + ".");
 		}
     }
 }
