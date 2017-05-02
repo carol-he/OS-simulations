@@ -7,32 +7,31 @@ class paging {
 	static Scanner randomSrc;
 	public static int randomOS(int currentProcessNum){
 		int X = randomSrc.nextInt();
-		System.out.println(currentProcessNum+1 + " uses random number: " + X);
         return X;
     }
 	public static void main(String[] args) throws FileNotFoundException{ 
     	//scanner for input file
-        String name = args[0];
-		File fileName = new File(name);
-		Scanner src = new Scanner(fileName);
+        //String name = args[0];
+		//File fileName = new File(name);
+		//Scanner src = new Scanner(fileName);
 		//scanner for random numbers
 		File randomFileName = new File("random-numbers.txt");
         randomSrc = new Scanner(randomFileName);
-		int M = src.nextInt();
-		int P = src.nextInt();
-		int S = src.nextInt();
-		int J = src.nextInt();
-		int N = src.nextInt();
-		String R = src.next();
+		int M = Integer.parseInt(args[0]);
+		int P = Integer.parseInt(args[1]);
+		int S = Integer.parseInt(args[2]);
+		int J = Integer.parseInt(args[3]);
+		int N = Integer.parseInt(args[4]);
+		String R = args[5];
 		int time = 0;
-		//int O = src.nextInt();
+		int O = Integer.parseInt(args[6]);
 		System.out.println("The machine size is " + M + ".");
 		System.out.println("The page size is " + P + ".");
 		System.out.println("The process size is " + S + ".");
 		System.out.println("The job mix number is " + J + ".");
 		System.out.println("The number of references per process is " + N + ".");
 		System.out.println("The replacement algorithm is " + R + ".");
-		//System.out.println("The level of debugging output is " + O + ".");
+		System.out.println("The level of debugging output is " + O + ".");
 		System.out.println();
 		int numFrames = M / P;
 		//create empty frame table
@@ -101,10 +100,8 @@ class paging {
 			}
 			if(hit != -1){
 				//hit, update end time
-				System.out.println(currentProcessNum + 1 + " references word " + currentProcess.getWordReferenced() + " (page " + currentPageNum + ") at time " + (time+1) + ": Hit in frame " + hit);
 				frameTable[hit].setEndTime(time);
 			} else {
-				System.out.print(currentProcessNum + 1 + " references word " + currentProcess.getWordReferenced() + " (page " + currentPageNum + ") at time " + (time+1) + ": Fault, ");
 				//miss
 				//check if there's a free frame and put it in the free frame
 				int frameToUse = -1;
@@ -139,21 +136,16 @@ class paging {
 					else if(R.equals("random")){
 						frameToUse = randomOS(currentProcessNum) % frameTable.length;
 					}
-					System.out.println("evicting page " + 0 + " of " + 0 + " from frame " + frameToUse + ".");
 					//calculate residency time, increment evictions
 					int pID = frameTable[frameToUse].getProcessID();
 					processes.get(pID).setEvictCount(processes.get(pID).getEvictCount() + 1);
 					
-					System.out.println("adding evict count to " + currentProcessNum + " total: " + processes.get(pID).getEvictCount());
 					numEvictions++;
 					int resTime = time - frameTable[frameToUse].getStartTime();
 					
 					residencySum = residencySum + resTime;
 					processes.get(pID).setResidencyTime(processes.get(pID).getResidencyTime() + resTime);
-					System.out.println("adding resTime " + resTime + " count to " + currentProcessNum + " total: " + processes.get(pID).getResidencyTime());
 					
-				} else {
-					System.out.println("using free frame " + frameToUse);
 				}
 				//increment fault count
 				currentProcess.setFaultCount(currentProcess.getFaultCount() + 1);
